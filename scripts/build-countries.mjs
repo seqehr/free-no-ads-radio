@@ -61,7 +61,7 @@ function topCounts(values, n, exclude = new Set()) {
   for (const v of values) { const k = v.trim(); if (!k || exclude.has(k.toLowerCase())) continue; c.set(k, (c.get(k) || 0) + 1); }
   return [...c.entries()].sort((a, b) => b[1] - a[1]).slice(0, n).map(([k]) => k);
 }
-const titleCase = s => s.replace(/\b\w/g, c => c.toUpperCase());
+const titleCase = s => s.normalize("NFC").split(/(\s+)/).map(w => w.charAt(0).toLocaleUpperCase("en") + w.slice(1)).join("");
 
 function stationLi(s, i) {
   const tags = (s.tags || "").split(",").filter(Boolean).slice(0, 3).join(" · ");
@@ -86,7 +86,10 @@ function countryPage(tpl, p, pages) {
   const top3 = top.slice(0, 3).map(s => s.name.trim());
   const nameWords = new Set([name.toLowerCase(), (regionNames.of(cc) || "").toLowerCase(), cc.toLowerCase()]);
   const genres = topCounts(stations.flatMap(s => (s.tags || "").toLowerCase().split(",")), 6, new Set([...GENERIC_TAGS, ...nameWords])).map(titleCase);
-  const regions = topCounts(stations.map(s => s.state || ""), 5);
+  // Regions arrive in mixed case with duplicates ("Ankara", "ANKARA"); group case-insensitively,
+  // skip the country itself and long free-text entries
+  const regions = topCounts(stations.map(s => (s.state || "").trim()).filter(r => r && r.split(/\s+/).length <= 3)
+    .map(r => titleCase(r.toLocaleLowerCase("en").replace(/i\u0307/g, "i"))), 5, nameWords);
   const langs = topCounts(stations.flatMap(s => (s.language || "").split(",")), 3).map(titleCase);
   const count = total.toLocaleString("en");
 
