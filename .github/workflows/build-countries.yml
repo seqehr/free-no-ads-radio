@@ -16,7 +16,7 @@ permissions:
 
 concurrency:
   group: build-countries
-  cancel-in-progress: false
+  cancel-in-progress: true   # a newer push makes an older run pointless
 
 jobs:
   build:
@@ -38,7 +38,12 @@ jobs:
           git add -A radio sitemap.xml index.html
           if git diff --cached --quiet; then
             echo "No changes"
-          else
-            git commit -m "Update country pages ($(date -u +%F))"
-            git push
+            exit 0
           fi
+          git commit -m "Update country pages ($(date -u +%F))"
+          # Someone may have pushed while we were building: rebase and retry instead of failing
+          for i in 1 2 3; do
+            git push && exit 0
+            git pull --rebase -X theirs origin main || { git rebase --abort; git pull --rebase origin main; }
+          done
+          exit 1
