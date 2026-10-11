@@ -35,7 +35,7 @@
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.55;
-  padding:env(safe-area-inset-top,0px) 16px calc(130px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent}
+  padding:env(safe-area-inset-top,0px) 16px calc(180px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent}
 .wrap{max-width:660px;margin:0 auto}
 header{padding-block:24px 6px;display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
 h1{font-family:var(--f-display);font-weight:800;font-size:32px;margin:0;letter-spacing:-.8px}
@@ -89,6 +89,33 @@ footer a{color:inherit}
 .timer{font:inherit;font-size:12px;background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:4px 10px;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums}
 .timer.act{color:var(--accent);border-color:var(--accent)}
 @media (max-width:420px){.bars{display:none}}
+
+.gh{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--fg);text-decoration:none;
+  border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px}
+.gh svg{width:14px;height:14px;fill:var(--accent)}
+.gh:hover{border-color:var(--accent)}
+.pstar{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;
+  color:var(--accent);text-decoration:none;font-size:18px}
+.pstar:hover{border-color:var(--accent);background:var(--glow)}
+.ask{max-width:660px;margin:0 auto 10px;display:flex;align-items:center;gap:10px;font-size:13px;
+  background:var(--glow);border:1px solid var(--line);border-radius:12px;padding:8px 10px 8px 12px}
+.ask span{flex:1;min-width:0}
+.askgo{flex:none;background:var(--accent);color:var(--accent-ink);text-decoration:none;font-weight:600;border-radius:999px;padding:5px 12px}
+.askx{flex:none;background:none;border:0;color:var(--muted);font-size:14px;cursor:pointer;padding:4px}
+
+.cpick{position:relative;flex:0 0 46%;min-width:0}
+.cbtn{width:100%;font:inherit;font-size:16px;color:var(--fg);background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:6px;cursor:pointer;text-align:left}
+.cbtn span:first-child{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.caret{color:var(--muted);font-size:12px}
+.cpanel{position:absolute;right:0;top:calc(100% + 6px);width:min(320px,calc(100vw - 32px));z-index:20;
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px;box-shadow:0 12px 40px rgba(0,0,0,.18)}
+.clist{list-style:none;margin:6px 0 0;padding:0;max-height:min(50vh,360px);overflow-y:auto;border:0}
+.clist li{border:0;padding:8px 10px;border-radius:8px;gap:8px;font-size:14px}
+.clist li[aria-selected="true"]{background:var(--glow);font-weight:600}
+.clist li.hl{background:var(--glow)}
+.clist .n{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.clist .empty{color:var(--muted);cursor:default}
 </style>
 </head>
 <body>
@@ -98,15 +125,26 @@ footer a{color:inherit}
       <h1>Open Dial<span>.</span></h1>
       <div class="tagline">Radio from every country. No ads, no sign-up.</div>
     </div>
-    <div class="freq">FM 87.5 – 108.0 MHz</div>
+    <a class="gh" href="https://github.com/seqehr/free-no-ads-radio" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .67.42l1.88 3.81 4.2.61a.75.75 0 0 1 .42 1.28l-3.04 2.96.72 4.19a.75.75 0 0 1-1.09.79L8 12.33l-3.76 1.98a.75.75 0 0 1-1.09-.79l.72-4.19L.83 6.37a.75.75 0 0 1 .42-1.28l4.2-.61L7.33.67A.75.75 0 0 1 8 .25Z"/></svg>
+      Star on GitHub
+    </a>
   </header>
 
   <div class="controls">
     <div class="row">
       <label class="sr" for="q">Search stations</label>
       <input id="q" type="search" placeholder="Search stations…" autocomplete="off">
-      <label class="sr" for="country">Country</label>
-      <select id="country"><option value="">Loading countries…</option></select>
+      <div class="cpick" id="cpick">
+        <button type="button" class="cbtn" id="cbtn" aria-haspopup="listbox" aria-expanded="false">
+          <span id="clabel">Loading countries…</span><span class="caret" aria-hidden="true">▾</span>
+        </button>
+        <div class="cpanel" id="cpanel" hidden>
+          <label class="sr" for="cq">Search countries</label>
+          <input id="cq" type="search" placeholder="Type a country…" autocomplete="off">
+          <ul class="clist" id="clist" role="listbox" aria-label="Countries"></ul>
+        </div>
+      </div>
     </div>
     <div class="tabs" id="tags" role="group" aria-label="Genre"></div>
   </div>
@@ -121,6 +159,11 @@ footer a{color:inherit}
 </div>
 
 <div class="player" id="player">
+  <div class="ask" id="ask" hidden>
+    <span>Enjoying ad-free radio? A GitHub star helps others find it.</span>
+    <a class="askgo" id="askgo" href="https://github.com/seqehr/free-no-ads-radio" target="_blank" rel="noopener">★ Star</a>
+    <button class="askx" id="askx" aria-label="Dismiss">✕</button>
+  </div>
   <div class="in">
     <button class="play" id="play" disabled aria-label="Play">▶</button>
     <div class="now">
@@ -129,6 +172,7 @@ footer a{color:inherit}
     </div>
     <div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     <button class="timer" id="timer" aria-label="Sleep timer">Sleep: off</button>
+    <a class="pstar" href="https://github.com/seqehr/free-no-ads-radio" target="_blank" rel="noopener" aria-label="Star this project on GitHub" title="Star on GitHub">☆</a>
   </div>
 </div>
 
@@ -170,11 +214,44 @@ async function loadCountries(){
     for(const c of data){const cc=(c.iso_3166_1||"").toUpperCase(); if(cc.length!==2) continue; by[cc]=(by[cc]||0)+c.stationcount;}
     list=Object.entries(by).map(([cc,n])=>{let nm; try{nm=names.of(cc)}catch{nm=cc} return {cc,nm,n}}).sort((a,b)=>a.nm.localeCompare(b.nm));
   }catch{}
-  const sel=$("country");
-  sel.innerHTML=`<option value="">🌐 All countries</option>`+list.map(c=>`<option value="${c.cc}">${flag(c.cc)} ${esc(c.nm)} (${c.n.toLocaleString("en")})</option>`).join("");
-  if(state.country && !list.some(c=>c.cc===state.country)) state.country=list.length?"US":"";
-  sel.value=state.country||"";
+  countries=[{cc:"",nm:"All countries",n:0},...list];
+  if(state.country && !list.some(c=>c.cc===state.country)) state.country=list.some(c=>c.cc==="US")?"US":"";
+  setCountryLabel();
 }
+
+/* ---- searchable country picker ---- */
+let countries=[{cc:"",nm:"All countries",n:0}], shown=[], hl=0;
+const countryName=cc=>(countries.find(c=>c.cc===cc)||{nm:cc||"All countries"}).nm;
+function setCountryLabel(){ $("clabel").textContent=`${flag(state.country)} ${countryName(state.country)}`; }
+function drawCountries(){
+  const q=$("cq").value.trim().toLowerCase();
+  shown=countries.filter(c=>!q||c.nm.toLowerCase().includes(q)||c.cc.toLowerCase()===q);
+  // names that start with the query come first
+  if(q) shown.sort((a,b)=>(b.nm.toLowerCase().startsWith(q))-(a.nm.toLowerCase().startsWith(q)));
+  hl=Math.min(hl,Math.max(shown.length-1,0));
+  $("clist").innerHTML=shown.length?shown.map((c,i)=>`<li role="option" data-c="${c.cc}" aria-selected="${c.cc===state.country}" class="${i===hl?"hl":""}">
+      <span>${flag(c.cc)}</span><span>${esc(c.nm)}</span>${c.n?`<span class="n">${c.n.toLocaleString("en")}</span>`:""}</li>`).join("")
+    :`<li class="empty">No country matches “${esc(q)}”</li>`;
+  $("clist").querySelector(".hl")?.scrollIntoView({block:"nearest"});
+}
+function openPicker(){
+  $("cpanel").hidden=false; $("cbtn").setAttribute("aria-expanded","true");
+  $("cq").value=""; hl=Math.max(0,countries.findIndex(c=>c.cc===state.country)); drawCountries(); $("cq").focus();
+}
+function closePicker(){ $("cpanel").hidden=true; $("cbtn").setAttribute("aria-expanded","false"); }
+function pickCountry(cc){
+  state.country=cc; store.set("country",cc); setCountryLabel(); closePicker(); load();
+}
+$("cbtn").onclick=()=>$("cpanel").hidden?openPicker():closePicker();
+$("cq").oninput=()=>{hl=0;drawCountries()};
+$("cq").onkeydown=e=>{
+  if(e.key==="ArrowDown"){hl=Math.min(hl+1,shown.length-1);drawCountries();e.preventDefault()}
+  else if(e.key==="ArrowUp"){hl=Math.max(hl-1,0);drawCountries();e.preventDefault()}
+  else if(e.key==="Enter"&&shown[hl]){pickCountry(shown[hl].cc);e.preventDefault()}
+  else if(e.key==="Escape"){closePicker();$("cbtn").focus()}
+};
+$("clist").onclick=e=>{const li=e.target.closest("[data-c]"); if(li) pickCountry(li.dataset.c);};
+document.addEventListener("click",e=>{ if(!$("cpick").contains(e.target)) closePicker(); });
 
 async function load(){
   const id=++reqId;
@@ -196,7 +273,7 @@ async function load(){
 }
 
 function render(){
-  const where=state.country?($("country").selectedOptions[0]?.textContent.replace(/\s*\([\d,]+\)$/,"")||state.country):"all countries";
+  const where=state.country?`${flag(state.country)} ${countryName(state.country)}`:"all countries";
   $("status").textContent=stations.length
     ?(state.tag==="fav"?`${stations.length} favorite${stations.length>1?"s":""}`:`${stations.length.toLocaleString("en")} stations · ${where}`)
     :(state.tag==="fav"?"No favorites yet. Tap ☆ next to a station to save it.":"No stations found. Try another genre or country.");
@@ -249,7 +326,21 @@ $("list").onclick=e=>{
 };
 $("tags").onclick=e=>{const b=e.target.closest(".chip"); if(!b) return; state.tag=b.dataset.t;
   document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b)); load();};
-$("country").onchange=e=>{state.country=e.target.value; store.set("country",state.country); load();};
+
+/* ---- gentle star request: once, after 3 minutes of listening ---- */
+let listened=store.get("listened",0), askTick=null;
+const askDone=()=>store.get("askDone",false);
+function hideAsk(){ $("ask").hidden=true; store.set("askDone",true); }
+audio.addEventListener("playing",()=>{
+  if(askDone()||askTick) return;
+  askTick=setInterval(()=>{
+    if(audio.paused) return;
+    listened+=10; store.set("listened",listened);
+    if(listened>=180){ clearInterval(askTick); if(!askDone()) $("ask").hidden=false; }
+  },10000);
+});
+$("askx").onclick=hideAsk;
+$("askgo").onclick=hideAsk;
 let qt; $("q").oninput=e=>{clearTimeout(qt); qt=setTimeout(()=>{state.q=e.target.value.trim(); load();},400);};
 
 const STEPS=[0,15,30,60,90];
