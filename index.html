@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--seo:head-->
 <title>Free Radio Online, No Ads – Live Radio Stations from Every Country</title>
 <meta name="description" content="Listen to free live radio online with no ads, no sign-up and no tracking. 30,000+ FM, news, music and talk stations from 200+ countries, in your browser or on iPhone and Android.">
 <meta name="keywords" content="free radio, radio online, no ads radio, ad-free radio, live radio, internet radio, FM radio online, world radio, radio stations by country">
@@ -20,7 +21,7 @@
 <meta name="twitter:title" content="Free Radio Online, No Ads">
 <meta name="twitter:description" content="Live radio from every country. No ads, no sign-up, no tracking.">
 <meta name="twitter:image" content="https://seqehr.github.io/free-no-ads-radio/og.png">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="/free-no-ads-radio/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -43,9 +44,10 @@
  ]}
 ]}
 </script>
+<!--/seo:head-->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ff7a3d'/%3E%3Ccircle cx='32' cy='32' r='10' fill='%2314171c'/%3E%3Cpath d='M16 16a22 22 0 0 0 0 32M48 16a22 22 0 0 1 0 32' stroke='%2314171c' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon.png">
+<link rel="apple-touch-icon" href="/free-no-ads-radio/icon.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/free-no-ads-radio/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
@@ -67,6 +69,7 @@
   --accent:#ff7a3d; --accent-ink:#14171c; --glow:rgba(255,122,61,.14); color-scheme:dark}
 
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.55;
   padding:env(safe-area-inset-top,0px) 16px calc(180px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent}
@@ -157,14 +160,28 @@ footer a{color:inherit}
 .about summary{cursor:pointer;font-weight:600}
 .about details p{margin:8px 0 0}
 .tagline{margin:0}
+.crumbs{font-size:12px;color:var(--muted);margin:0 0 4px}
+.crumbs a{color:inherit}
+.hub{margin-top:30px}
+.hub h2{font-family:var(--f-display);font-weight:800;font-size:20px;letter-spacing:-.3px;margin:0 0 10px}
+.hub ul{display:flex;flex-wrap:wrap;gap:6px;border:0}
+.hub li{border:0;padding:0;cursor:auto}
+.hub li:hover{background:none}
+.hub a{display:inline-block;font-size:13px;color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 11px;background:var(--surface)}
+.hub a:hover,.hub a[aria-current]{border-color:var(--accent);color:var(--accent)}
+.toplist{margin:6px 0 10px;padding-left:20px;color:var(--muted)}
+.toplist li{display:list-item;border:0;padding:2px 0;cursor:auto}
+.toplist li:hover{background:none}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div>
-      <h1>Free No-Ads Radio<span>.</span></h1>
+      <!--seo:hero-->
+<h1>Free No-Ads Radio<span>.</span></h1>
       <p class="tagline">Listen to free live radio online from every country. No ads, no sign-up.</p>
+<!--/seo:hero-->
     </div>
     <a class="gh" href="https://github.com/seqehr/free-no-ads-radio" target="_blank" rel="noopener">
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .67.42l1.88 3.81 4.2.61a.75.75 0 0 1 .42 1.28l-3.04 2.96.72 4.19a.75.75 0 0 1-1.09.79L8 12.33l-3.76 1.98a.75.75 0 0 1-1.09-.79l.72-4.19L.83 6.37a.75.75 0 0 1 .42-1.28l4.2-.61L7.33.67A.75.75 0 0 1 8 .25Z"/></svg>
@@ -191,9 +208,10 @@ footer a{color:inherit}
   </div>
 
   <div class="status" id="status" aria-live="polite">Loading stations…</div>
-  <ul id="list"></ul>
+  <ul id="list"><!--seo:list--><!--/seo:list--></ul>
 
-  <section class="about" aria-labelledby="about-h">
+  <!--seo:about-->
+<section class="about" aria-labelledby="about-h">
     <h2 id="about-h">Free online radio with no ads</h2>
     <p>Free No-Ads Radio is a simple player for live internet radio. Pick any country, search for a station or browse by genre, and press play. It works in any browser on desktop, iPhone and Android, with no app to install, no account and no tracking.</p>
     <p>The directory holds more than 30,000 FM, news, talk and music stations from over 200 countries, from BBC and NPR to local stations in Germany, Turkey, Brazil, India, Iran and Japan. Popular stations are listed first, and your favorites and last station are saved on your device.</p>
@@ -203,6 +221,9 @@ footer a{color:inherit}
     <details><summary>Can I use it on iPhone like an app?</summary><p>Open this page in Safari, tap Share, then Add to Home Screen. It opens full-screen and you can control playback from the lock screen.</p></details>
     <details><summary>Why is a station missing?</summary><p>Only stations with secure (HTTPS) streams are shown, because browsers block insecure audio on secure pages. Stations that are offline are hidden too.</p></details>
   </section>
+<!--/seo:about-->
+
+  <!--seo:hub--><!--/seo:hub-->
 
   <footer>
     Station data from the community-run <a href="https://www.radio-browser.info" target="_blank" rel="noopener">Radio Browser</a> directory.
@@ -229,6 +250,7 @@ footer a{color:inherit}
 </div>
 
 <audio id="audio" preload="none"></audio>
+<!--seo:preset--><!--/seo:preset-->
 
 <script>
 const MIRRORS=["https://de1.api.radio-browser.info","https://fi1.api.radio-browser.info","https://de2.api.radio-browser.info"];
@@ -244,7 +266,8 @@ function guessCountry(){
   return "US";
 }
 
-let favs=store.get("favs",{}), state={country:store.get("country",null)??guessCountry(),tag:"",q:""};
+const PRESET=window.PRESET||null;
+let favs=store.get("favs",{}), state={country:PRESET?PRESET.cc:(store.get("country",null)??guessCountry()),tag:"",q:""};
 let current=null, stations=[], sleepT=null, sleepMin=0, reqId=0;
 
 $("tags").innerHTML=TAGS.map(([t,n])=>`<button class="chip" data-t="${t}" aria-pressed="${t===""}">${n}</button>`).join("");
@@ -267,13 +290,13 @@ async function loadCountries(){
     list=Object.entries(by).map(([cc,n])=>{let nm; try{nm=names.of(cc)}catch{nm=cc} return {cc,nm,n}}).sort((a,b)=>a.nm.localeCompare(b.nm));
   }catch{}
   countries=[{cc:"",nm:"All countries",n:0},...list];
-  if(state.country && !list.some(c=>c.cc===state.country)) state.country=list.some(c=>c.cc==="US")?"US":"";
+  if(list.length && state.country && !list.some(c=>c.cc===state.country)) state.country=list.some(c=>c.cc==="US")?"US":"";
   setCountryLabel();
 }
 
 /* ---- searchable country picker ---- */
 let countries=[{cc:"",nm:"All countries",n:0}], shown=[], hl=0;
-const countryName=cc=>(countries.find(c=>c.cc===cc)||{nm:cc||"All countries"}).nm;
+const countryName=cc=>(countries.find(c=>c.cc===cc)||{nm:(PRESET&&PRESET.cc===cc&&PRESET.name)||cc||"All countries"}).nm;
 function setCountryLabel(){ $("clabel").textContent=`${flag(state.country)} ${countryName(state.country)}`; }
 function drawCountries(){
   const q=$("cq").value.trim().toLowerCase();
@@ -321,7 +344,12 @@ async function load(){
     stations=data.filter(s=>(s.url_resolved||"").startsWith("https://")).filter(s=>{
       const k=(s.name||"").trim().toLowerCase(); if(!k||seen.has(k)) return false; seen.add(k); return true;});
     render();
-  }catch{ if(id===reqId){ stations=[]; $("list").innerHTML=""; $("status").textContent="Couldn't reach the station directory. Check your connection and try again."; } }
+  }catch{
+    if(id!==reqId) return;
+    // On a country page, keep the built-in station list if the live directory is unreachable
+    if(PRESET&&PRESET.stations&&state.country===PRESET.cc&&!state.tag&&!state.q){ stations=PRESET.stations; render(); return; }
+    stations=[]; $("list").innerHTML=""; $("status").textContent="Couldn't reach the station directory. Check your connection and try again.";
+  }
 }
 
 function render(){
@@ -406,6 +434,7 @@ $("timer").onclick=()=>{
 
 const last=store.get("last",null);
 if(last&&last.url_resolved){current=last;setNow(last,"Last station · tap play");}
+if(PRESET&&PRESET.stations&&PRESET.stations.length){stations=PRESET.stations;render();}
 loadCountries().then(load);
 </script>
 </body>
