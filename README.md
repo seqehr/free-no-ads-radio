@@ -1,6 +1,6 @@
-# Open Dial — free radio, no ads
+# Free No-Ads Radio — listen to live radio online, free and without ads
 
-A tiny web radio player for phones and desktops. Thousands of live stations from every country, with no ads, no account and no tracking.
+A free web radio player for phones and desktops. Thousands of live stations from every country, with no ads, no account and no tracking.
 
 **Use it:** https://seqehr.github.io/free-no-ads-radio/
 

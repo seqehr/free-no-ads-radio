@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://seqehr.github.io/free-no-ads-radio/sitemap.xml

@@ -1,0 +1,11 @@
+{
+  "name": "Free No-Ads Radio",
+  "short_name": "No-Ads Radio",
+  "description": "Free live radio from every country, with no ads.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#14171c",
+  "theme_color": "#14171c",
+  "icons": [{ "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }]
+}
