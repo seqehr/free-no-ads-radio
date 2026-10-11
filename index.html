@@ -116,6 +116,13 @@ footer a{color:inherit}
 .play{width:56px;height:56px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);
   font-size:20px;cursor:pointer;flex:none;display:grid;place-items:center}
 .play:disabled{opacity:.4;cursor:default}
+.ctrls{display:flex;align-items:center;gap:6px;flex:none}
+.skip{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--fg);
+  display:grid;place-items:center;cursor:pointer;padding:0}
+.skip svg{width:16px;height:16px;fill:currentColor}
+.skip:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.skip:disabled{opacity:.35;cursor:default}
+@media (max-width:420px){.player .in{gap:10px}.play{width:50px;height:50px}.skip{width:34px;height:34px}}
 .now{flex:1;min-width:0}
 .now .name{font-size:16px}
 .bars{display:flex;gap:3px;align-items:flex-end;height:18px}
@@ -244,7 +251,11 @@ footer a{color:inherit}
     <button class="askx" id="askx" aria-label="Dismiss">✕</button>
   </div>
   <div class="in">
-    <button class="play" id="play" disabled aria-label="Play">▶</button>
+    <div class="ctrls">
+      <button class="skip" id="prev" disabled aria-label="Previous station"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+      <button class="play" id="play" disabled aria-label="Play">▶</button>
+      <button class="skip" id="next" disabled aria-label="Next station"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+    </div>
     <div class="now">
       <div class="name" id="nowName">Nothing playing</div>
       <div class="meta" id="nowMeta">Pick a station from the list</div>
@@ -379,10 +390,25 @@ function setNow(s,msg){
   $("nowName").textContent=s.name.trim();
   $("nowMeta").textContent=msg;
   $("play").disabled=false;
+  $("prev").disabled=$("next").disabled=false;
 }
 
-function play(s){
+let queue=[], skipDir=0, skipTries=0;
+
+// Prev/next walk the list the station was picked from, even if the filters change afterwards
+function step(dir, auto){
+  const q=queue.length?queue:stations;
+  if(!q.length) return;
+  const i=current?q.findIndex(x=>x.stationuuid===current.stationuuid):-1;
+  const n=q[((i<0?(dir>0?-1:0):i)+dir+q.length)%q.length];
+  skipDir=dir; if(!auto) skipTries=0;
+  play(n,q,true);
+}
+
+function play(s,fromQueue,keepSkip){
   current=s;
+  queue=fromQueue||stations.slice();
+  if(!keepSkip){skipDir=0;skipTries=0;}
   audio.src=s.url_resolved;
   setNow(s,"Connecting…");
   audio.play().catch(()=>{$("nowMeta").textContent="This station won't play. Try another one."});
@@ -391,8 +417,6 @@ function play(s){
   if("mediaSession" in navigator){
     navigator.mediaSession.metadata=new MediaMetadata({title:s.name.trim(),artist:s.country||"Live radio",album:"Free No-Ads Radio",
       artwork:s.favicon&&s.favicon.startsWith("https")?[{src:s.favicon,sizes:"512x512"}]:[]});
-    navigator.mediaSession.setActionHandler("play",()=>audio.play());
-    navigator.mediaSession.setActionHandler("pause",()=>audio.pause());
   }
   render();
 }
@@ -401,7 +425,30 @@ audio.addEventListener("playing",()=>{$("player").classList.add("playing");$("pl
   $("nowMeta").textContent=(current.tags||"").split(",").filter(Boolean).slice(0,2).join(" · ")||"Live";});
 audio.addEventListener("pause",()=>{$("player").classList.remove("playing");$("play").textContent="▶";$("play").setAttribute("aria-label","Play")});
 audio.addEventListener("waiting",()=>$("nowMeta").textContent="Buffering…");
-audio.addEventListener("error",()=>{$("player").classList.remove("playing");$("play").textContent="▶";if(current)$("nowMeta").textContent="This station is offline right now."});
+audio.addEventListener("error",()=>{
+  $("player").classList.remove("playing");$("play").textContent="▶";
+  // A dead stream after next/prev: keep going in the same direction (up to 5 stations)
+  if(skipDir&&skipTries<5){skipTries++;$("nowMeta").textContent="Offline, skipping…";setTimeout(()=>step(skipDir,true),400);return;}
+  if(current)$("nowMeta").textContent="This station is offline right now.";
+});
+audio.addEventListener("playing",()=>{skipTries=0;});
+
+$("prev").onclick=()=>step(-1);
+$("next").onclick=()=>step(1);
+
+// Lock screen / Control Center / headphones / CarPlay: play, pause, previous, next
+if("mediaSession" in navigator){
+  const ms=navigator.mediaSession, set=(a,f)=>{try{ms.setActionHandler(a,f)}catch{}};
+  set("play",()=>{ if(!current)return; if(!audio.src) audio.src=current.url_resolved; audio.play().catch(()=>{}); });
+  set("pause",()=>audio.pause());
+  set("stop",()=>audio.pause());
+  set("previoustrack",()=>step(-1));
+  set("nexttrack",()=>step(1));
+  // Live streams can't seek; clearing these makes iOS show ⏮ ⏭ instead of the 15-second skip buttons
+  ["seekbackward","seekforward","seekto"].forEach(a=>set(a,null));
+  audio.addEventListener("playing",()=>{try{ms.playbackState="playing"}catch{}});
+  audio.addEventListener("pause",()=>{try{ms.playbackState="paused"}catch{}});
+}
 
 $("play").onclick=()=>{ if(!current)return; if(audio.paused){ if(!audio.src) audio.src=current.url_resolved; audio.play().catch(()=>{});} else audio.pause(); };
 $("list").onclick=e=>{
